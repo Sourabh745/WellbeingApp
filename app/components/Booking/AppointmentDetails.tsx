@@ -5,7 +5,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import moment from 'moment';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {CFill, ChatRight, TimeFill, Users, VideoOn} from '../../assets/svgs';
 import {formatDate, formatTiming, moderateScale} from '../../utils';
 import {$indicator} from '../AuthModal/style';
@@ -35,15 +35,16 @@ export const AppointmentDetails = ({
   patientName,
   bottomSheetModalRef,
 }: AppointmentDetailsProps) => {
+ 
   const snapPoints = useMemo(() => ['1', '100%'], []);
   const closeModal = () => {
     bottomSheetModalRef.current?.close();
   };
   const fn = doctorName?.split(' ')[0];
 
-  const NOW = new Date().toString();
+  // const NOW = new Date();
   //I observed some issue with moment()
-  const Today = moment(NOW);
+  const Today = moment();
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -91,6 +92,7 @@ export const AppointmentDetails = ({
                     appointmentTime[0].endTime,
                   ).toUpperCase()}
                   {/* 9:30 AM - 10:30 AM */}
+                  
                 </Text>
               </Box>
               <Box

@@ -1,4 +1,4 @@
-package com.wellbeing
+package com.wellbeingcustomer
 
 import android.app.Application
 import com.facebook.react.PackageList

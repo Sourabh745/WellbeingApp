@@ -10,6 +10,7 @@ type IChannel = {
   sender: string;
   deliveryStatus: string;
   updatedAt: string;
+  // channelId: string;
   channelName: string;
   channelSelfie: string;
 };
@@ -63,6 +64,7 @@ export const sendMessage = async (message: IMessage) => {
       record.patient = message.patient;
       record.sender = message.sender;
       record.deliveryStatus = message.deliveryStatus;
+      // record.channelId = message.channelId;
     });
 
     updateChannel.update(() => {

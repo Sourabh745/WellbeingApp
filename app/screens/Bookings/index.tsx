@@ -33,17 +33,17 @@ export const Bookings = () => {
   }, [selectedDate]);
 
   useEffect(() => {
-    if (data.length === 0) {
+    if (data?.length === 0) {
       setAppointments([]);
     } else {
       data.reduce(async (acc, item) => {
-        const time = moment(item.appointmentTime[0].startTime).format('h:mm a');
+        const time = moment(item.appointmentTime[0]?.startTime).format('h:mm a');
         const user = await getUser(item.doctorID);
         item.doctorName = user?.fullName;
         item.specialty = user?.specialty;
         item.selfie = user?.selfie;
 
-        const existingGroup = acc.find((group: any) => group.time === time);
+        const existingGroup = acc.find((group: any) => group?.time === time);
         if (existingGroup) {
           setAppointments([{...appointments, ...{item}}]);
         } else {

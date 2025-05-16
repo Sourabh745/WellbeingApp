@@ -28,7 +28,7 @@ export const ChipList = ({availableTime, onTimeSelected}: ChipListProps) => {
 
   return (
     <Box gap="m" mt="n" flexDirection="row" flexWrap="wrap">
-      {availableTime.map((item: any, index: React.Key | null | undefined) => (
+      {availableTime?.map((item: any, index: React.Key | null | undefined) => (
         <Pressable key={index} onPress={() => onPress(index, item)}>
           <Chip
             item={item}

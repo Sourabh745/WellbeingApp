@@ -42,7 +42,7 @@ export const isDateValid = (dob: Date) => {
 export const formatAMPM = (date: Date, withABV: boolean = true) => {
   if (date !== undefined && isDateValid(date) && date !== null) {
     let hours = date?.getHours();
-    let minutes = date.getMinutes();
+    let minutes = date?.getMinutes();
     const ampm = hours >= 12 ? 'pm' : 'am';
 
     hours %= 12;
@@ -120,11 +120,11 @@ export const availableDays = (dateRange: string, customRange: boolean) => {
   if (customRange) {
     startingDate = new Date(dateRange.split('/')[0]);
     maxDate = new Date(dateRange.split('/')[1]);
-  } else if (dateRange.includes('days')) {
+  } else if (dateRange?.includes('days')) {
     type = 'days';
-  } else if (dateRange.includes('ends')) {
+  } else if (dateRange?.includes('ends')) {
     type = 'ends';
-  } else if (dateRange.includes('Entire')) {
+  } else if (dateRange?.includes('Entire')) {
     type = 'entire';
   }
   return {startingDate, maxDate, type};

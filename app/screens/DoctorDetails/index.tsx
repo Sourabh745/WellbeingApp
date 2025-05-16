@@ -19,6 +19,7 @@ import {AppStackParamList} from '../../navigators';
 import {colors} from '../../theme';
 import {spacing} from '../../theme/spacing';
 export const DoctorDetails = () => {
+  console.log("====doctor details====")
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
 
@@ -29,6 +30,7 @@ export const DoctorDetails = () => {
   ]);
   const {params} = useRoute<RouteProp<AppStackParamList, 'DoctorDetails'>>();
   const {patients, yoe, rating, review} = params.doctor;
+  console.log("DoctorDetails::::", params.doctor)
   const onTabItemPress = (item: number) => {
     setIndex(item);
   };
@@ -84,7 +86,9 @@ export const DoctorDetails = () => {
           />
         </Box>
 
-        <TabView
+        <ScheduleTab doctor={params.doctor} />
+
+        {/* <TabView
           lazy={true}
           style={{
             marginTop: spacing.ll,
@@ -95,7 +99,7 @@ export const DoctorDetails = () => {
           renderScene={renderScene}
           onIndexChange={setIndex}
           initialLayout={{width: layout.width}}
-        />
+        /> */}
       </Box>
     </Screen>
   );

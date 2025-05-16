@@ -65,7 +65,7 @@ export const SPECIALISTS_INFO: ISPECIALISTS[] = [
     when: "Consult a general health care provider for annual check-ups, vaccinations, or health screenings. You should also visit if you experience persistent symptoms like fatigue, headaches, fever, or digestive issues. If you're managing chronic conditions, such as diabetes or high blood pressure, regular appointments help maintain stability and prevent complications.",
   },
   {
-    name: 'Dentist',
+    name: 'Dentistry',
     who: 'Dentist',
     summary:
       'Dentists specialize in the care of teeth, gums, and overall oral health. They diagnose and treat common dental issues like cavities, gum disease, and tooth infections while also focusing on preventative care through regular cleanings and check-ups. Dentists help maintain a healthy smile and prevent long-term oral health problems.',

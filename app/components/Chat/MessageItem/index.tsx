@@ -1,7 +1,4 @@
-import {withObservables} from '@nozbe/watermelondb/react';
-import React from 'react';
-import {observeDeliveryStatus} from '../../../db/helper';
-import MessagesModel from '../../../db/messagesModel';
+import React, { useEffect } from 'react';
 import {spacing} from '../../../theme/spacing';
 import {formatAMPM, moderateScale} from '../../../utils';
 import {Box} from '../../Box';
@@ -9,12 +6,15 @@ import {Text} from '../../Text';
 import {DeliveryStatus} from '../DeliveryStatus';
 
 type MessageItemProps = {
-  item: MessagesModel;
-  UID: string;
-  status?: MessagesModel[];
+  item: any;
+  UID: any;
 };
+
 //TODO: Refactor chat item.
 const MessageItem = ({item, UID}: MessageItemProps) => {
+  console.log("ITEMS ::::", item);
+  
+
   if (item.sender === UID) {
     return (
       <Box maxWidth={'85%'} alignSelf={'flex-end'}>
@@ -41,7 +41,7 @@ const MessageItem = ({item, UID}: MessageItemProps) => {
             alignItems="flex-end"
             flexGrow={1}>
             <Text fontSize={moderateScale(12)} color="greyL">
-              {formatAMPM(item.createdAt)}
+            {formatAMPM(new Date(item.createdAt))}
             </Text>
             <Box pl="ii" alignItems="flex-end">
               <DeliveryStatus status={item.deliveryStatus} />
@@ -76,7 +76,7 @@ const MessageItem = ({item, UID}: MessageItemProps) => {
             alignItems="flex-end"
             flexGrow={1}>
             <Text fontSize={moderateScale(12)} color="greyL">
-              {formatAMPM(item.createdAt)}
+            {formatAMPM(new Date(item.createdAt))}
             </Text>
           </Box>
         </Box>
@@ -85,7 +85,4 @@ const MessageItem = ({item, UID}: MessageItemProps) => {
   }
 };
 
-const enhance = withObservables([], () => ({
-  status: observeDeliveryStatus(),
-}));
-export const EnhancedMessageItem = enhance(MessageItem);
+export const EnhancedMessageItem = MessageItem;

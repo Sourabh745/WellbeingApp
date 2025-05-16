@@ -10,18 +10,21 @@ import {UUID, isAndroid} from '../utils';
 
 export async function googleSignIn() {
   console.log("google sign in");
+  try {
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});    
+    const {data} = await GoogleSignin.signIn();// getting error here
+    console.log("GoogleSignin::::", data);
+    
+    const googleCredential = auth.GoogleAuthProvider.credential(data?.idToken!);
   
-  await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-  const {data} = await GoogleSignin.signIn();
-  console.log("GoogleSignin::::", data);
-  
-  const googleCredential = auth.GoogleAuthProvider.credential(data?.idToken!);
-
-  console.log("googleCredential::::", googleCredential);
-  
-  return auth()
-    .signInWithCredential(googleCredential)
-    .then(() => createUser('google'));
+    console.log("googleCredential::::", googleCredential);
+    
+    return auth()
+      .signInWithCredential(googleCredential)
+      .then(() => createUser('google'));
+  } catch (error) {
+    console.log("Error:::: ", error);
+  }
 }
 
 export async function appleSign() {
@@ -91,6 +94,7 @@ export async function appleSignInAndroid() {
 
 export const createUser = async (type: string, name?: string) => {
   const {currentUser} = auth();
+  try{
   const document = firestore().collection(USERS).doc(currentUser?.uid);
   const user = await document.get();
   const userInfo = {
@@ -103,15 +107,19 @@ export const createUser = async (type: string, name?: string) => {
     gender: '',
     deviceID: '',
   };
+  console.log("USERINFO::::", userInfo);
   if (!user.exists) {
     document.set(userInfo);
     storage.set('user', JSON.stringify(userInfo));
   } else {
     storage.set('user', JSON.stringify(user.data()));
   }
+}catch(err){
+  console.log("USERSCREATIONERR:::", err);
+}
 };
 
-export const USERS = 'Users';
+export const USERS = 'wellbeingUsers';
 export const PATIENT = 'patient';
 export const DOCTOR = 'doctor';
 export const APPOINTMENTS = 'Appointments';

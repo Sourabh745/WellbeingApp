@@ -42,7 +42,7 @@ export const useFirestore = (loading: boolean = true) => {
   const specialistDoctors = async (area: string) => {
     try {
       //true :just for testing
-
+        console.log("Speciality::::",area)
       const collection = await firestore()
         .collection(USERS)
         .where('userType', '==', 'doctor')
@@ -50,6 +50,7 @@ export const useFirestore = (loading: boolean = true) => {
         .where('specialty', '==', area)
         .get();
       const newData = collection.docs.map(doc => ({...doc.data()}));
+      
       setData(newData);
       setLoading(false);
     } catch {

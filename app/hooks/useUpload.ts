@@ -9,7 +9,7 @@ const useUpload = () => {
   const uploadDocument = (filePath: string) => {
     const extension = filePath.split('.').pop();
     const reference = storage().ref(
-      `${Math.floor(Math.random() * Date.now()).toString(16)}.${extension}`,
+      `WellbeingUsers/${Math.floor(Math.random() * Date.now()).toString(16)}.${extension}`,
     );
 
     const task = reference.putFile(filePath);

@@ -26,8 +26,9 @@ import {
 
 GoogleSignin.configure({
   scopes: ['profile', 'email'],
+  // offlineAccess: true,
   //WebclientID not android client id
-  webClientId: Config.WEB_CLIENT_ID,
+  webClientId: '564511324214-njb77j6ph0mrnf116id9kkjmo76rekuj.apps.googleusercontent.com',
   iosClientId: Config.CLIENT_ID_IOS,
 });
 
@@ -53,8 +54,6 @@ export const AuthModal = ({type, bottomSheetModalRef}: AuthModalProps) => {
       .then(() => setAuth(undefined))
       .catch(() => setAuth(undefined));
   };
-
-  console.log("AuthModal");
   
   return (
     <BottomSheetModal

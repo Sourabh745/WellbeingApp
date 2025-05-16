@@ -1,5 +1,6 @@
 import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import React, {useState} from 'react';
 import {useMMKVString} from 'react-native-mmkv';
 import {Basic, Language, Lock, Logout, Trash} from '../../assets/svgs';
@@ -16,6 +17,8 @@ export const Profile = () => {
   const signOut = async () => {
     setLoading(true);
     storage.set('user', '');
+    await GoogleSignin.revokeAccess(); // add this line because when trying to logging in again it's not asking email selection just using old credentials
+    await GoogleSignin.signOut(); // this line is also added here
     await auth().signOut();
   };
   const changeLanguage = () => {

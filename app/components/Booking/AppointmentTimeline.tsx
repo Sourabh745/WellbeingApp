@@ -6,6 +6,7 @@ import {
 import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {FlashList} from '@shopify/flash-list';
 import moment from 'moment';
+import {useNavigation} from '@react-navigation/native';
 import React, {useMemo, useRef, useState} from 'react';
 import {CFill, ChatRight, TimeFill, Users, VideoOn} from '../../assets/svgs';
 import {useUser} from '../../hooks';
@@ -19,6 +20,7 @@ import {Header} from '../Header';
 import {Text} from '../Text';
 import {TimelineItem} from './TimelineItem';
 import {$bottomView, $container} from './styles';
+import { StackNavigation } from '../../navigators';
 
 type AppointmentTimeline = {
   appointments: any[];
@@ -26,15 +28,25 @@ type AppointmentTimeline = {
 export const AppointmentTimeline = ({appointments}: AppointmentTimeline) => {
   const snapPoints = useMemo(() => ['1', '100%'], []);
   const {fullName} = useUser();
-  // const navigation = useNavigation<StackNavigation>();
+  const navigation = useNavigation<StackNavigation>();
   const [doctor, setDoctor] = useState<any>();
 
   const bottomSheetModalRef = useRef<BottomSheetModalMethods>(null);
 
+  const onPress = async () => {
+    bottomSheetModalRef.current?.close();
+    navigation.navigate('Messages', {
+      doctorID: doctor.doctorID,
+      channelName: doctor.doctorName,
+      channelSelfie: doctor.selfie,
+    });
+  };
+
   const closeModal = () => {
     bottomSheetModalRef.current?.close();
   };
-  const NOW = new Date().toString();
+  const NOW = new Date();
+  // const NOW = new Date().toString();
   //I observed some issue with moment()
   const Today = moment(NOW);
   const timelineItemPress = (
@@ -152,12 +164,13 @@ export const AppointmentTimeline = ({appointments}: AppointmentTimeline) => {
                 </Box>
               </Box>
             </Box>
-            {Today.isSameOrBefore(doctor?.appointmentTime[0].startTime) && (
+            {!Today.isSameOrBefore(doctor?.appointmentTime[0]?.startTime) && (
               <Box alignItems="center" pb="ll" pt="l" paddingHorizontal="l">
                 <Box gap="l" flexDirection="row">
-                  <Button label="Chat" leftIcon={<ChatRight />} />
+                  <Button label="Chat" onPress={onPress} leftIcon={<ChatRight />} />
                   <Button
                     label="Video Call"
+                    onPress={onPress}
                     useSecondary={true}
                     leftIcon={<VideoOn fill="#fff" />}
                   />

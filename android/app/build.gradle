@@ -90,13 +90,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.wellbeing"
+    namespace "com.wellbeingcustomer"
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        resValue "string", "build_config_package", "com.wellbeing"
+        resValue "string", "build_config_package", "com.wellbeingcustomer"
     }
     signingConfigs {
         debug {
@@ -104,6 +104,12 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        release {
+            storeFile file(MYAPP_RELEASE_STORE_FILE)
+            storePassword MYAPP_RELEASE_STORE_PASSWORD
+            keyAlias MYAPP_RELEASE_KEY_ALIAS
+            keyPassword MYAPP_RELEASE_KEY_PASSWORD
         }
     }
     buildTypes {
@@ -113,7 +119,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -124,21 +130,21 @@ android {
     productFlavors {
         production {
             minSdkVersion rootProject.ext.minSdkVersion
-            applicationId 'com.wellbeing'
+            applicationId 'com.wellbeingcustomer'
             dimension "standard"
             manifestPlaceholders = [
-                    appName:  "Wellbeing",
+                    appName:  "WellbeingProduction",
                     appIcon: "@mipmap/ic_launcher",
                     appIconRound: "@mipmap/ic_launcher_round",
             ]
             targetSdkVersion rootProject.ext.targetSdkVersion
-            resValue "string", "build_config_package", "com.wellbeing"
+            resValue "string", "build_config_package", "com.wellbeingcustomer"
 
 
         }
         staging {
             minSdkVersion rootProject.ext.minSdkVersion
-            applicationId 'com.wellbeing'
+            applicationId 'com.wellbeingcustomer'
             dimension "standard"
             applicationIdSuffix ".staging"
             versionNameSuffix "-staging"
@@ -148,12 +154,12 @@ android {
                     appIconRound: "@mipmap/ic_launcher_staging_round",
             ]
             targetSdkVersion rootProject.ext.targetSdkVersion
-            resValue "string", "build_config_package", "com.wellbeing"
+            resValue "string", "build_config_package", "com.wellbeingcustomer"
 
         }
         development {
             minSdkVersion rootProject.ext.minSdkVersion
-            applicationId 'com.wellbeing'
+            applicationId 'com.wellbeingcustomer'
             dimension "standard"
             manifestPlaceholders = [
                     appName:  "WellbeingDev",
@@ -163,7 +169,7 @@ android {
             applicationIdSuffix ".development"
             versionNameSuffix "-development"
             targetSdkVersion rootProject.ext.targetSdkVersion
-            resValue "string", "build_config_package", "com.wellbeing"
+            resValue "string", "build_config_package", "com.wellbeingcustomer"
 
         }
     }
@@ -179,8 +185,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-        implementation "com.google.android.gms:play-services-auth:20.7.0"
-
+    implementation "com.google.android.gms:play-services-auth:20.7.0"
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

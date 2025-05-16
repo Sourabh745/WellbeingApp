@@ -47,9 +47,9 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
 
   const datesBlacklistFunc = (date: moment.Moment) => {
     //Enable weekdays only
-    if (dateRange.includes('days')) {
+    if (dateRange?.includes('days')) {
       return date.isoWeekday() === 7 || date.isoWeekday() === 6;
-    } else if (dateRange.includes('ends')) {
+    } else if (dateRange?.includes('ends')) {
       //Enable weekends only
       return (
         date.isoWeekday() === 1 ||

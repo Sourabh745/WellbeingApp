@@ -11,6 +11,8 @@ export default class ChannelModel extends Model {
   // @ts-ignore
   @field('sender') sender;
   // @ts-ignore
+  @field('channelId') channelId;
+  // @ts-ignore
   @field('channel_name') channelName;
   // @ts-ignore
   @field('channel_selfie') channelSelfie;

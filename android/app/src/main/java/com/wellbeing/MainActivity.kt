@@ -1,4 +1,4 @@
-package com.wellbeing
+package com.wellbeingcustomer
 import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

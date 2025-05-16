@@ -99,6 +99,15 @@ export const CompleteProfile = () => {
   const completeProfile = () => {
     setIsLoading(true);
     uploadDocument(profilePic);
+    // (async () => {
+    //   await updateProfile(user.uid, {
+    //     ...user,
+    //     gender,
+    //     dob,
+    //     pic: '',
+    //     verify: true,
+    //   });
+    // })();
   };
   return (
     <Screen useAlignment isLoading={isLoading}>

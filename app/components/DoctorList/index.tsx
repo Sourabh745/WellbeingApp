@@ -18,6 +18,7 @@ export const DoctorList = ({data, isLoading}: DoctorListProps) => {
   const navigation = useNavigation<StackNavigation>();
 
   const onPress = (index: number) => {
+    console.log("==========before navigating=====");//==========just added
     navigation.navigate('DoctorDetails', {doctor: data[index]});
   };
   return (
