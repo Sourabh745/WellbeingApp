@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:564511324214:android:346a279c7f050b3b218097",
+        "android_client_info": {
+          "package_name": "com.wellbeingcustomer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564511324214-6lt74qt424ohunbghbjjk7k5d76qkocj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wellbeingcustomer",
+            "certificate_hash": "2db96dfe456f0946a728157cac15649eed029c73"
+          }
+        },
+        {
+          "client_id": "564511324214-njb77j6ph0mrnf116id9kkjmo76rekuj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuOoJ0nFapOHXw2xT87Z4SRB6Ez96_oQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564511324214-njb77j6ph0mrnf116id9kkjmo76rekuj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:564511324214:android:ac07ebd3028a3d01218097",
         "android_client_info": {
           "package_name": "com.wellbeingcustomer.development"
@@ -57,6 +94,14 @@
           "android_info": {
             "package_name": "com.wellbeingdoctor",
             "certificate_hash": "59253c0cff6fb6c04804ce95c1bd5d5d37b1e8cb"
+          }
+        },
+        {
+          "client_id": "564511324214-uhlg4i6in603hin6v7j12lue2njnp3pm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wellbeingdoctor",
+            "certificate_hash": "b96aa3ab9bc695f26eccb0d58a73930db5545211"
           }
         },
         {

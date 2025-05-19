@@ -58,6 +58,17 @@ export const useFirestore = (loading: boolean = true) => {
     }
   };
 
+  const checkIfSlotExists = async (doctorId: string, userId: any, date: any, time: any) => {
+  const snapshot = await firestore()
+    .collection(APPOINTMENTS)
+    .where('doctorID', '==', doctorId)
+    .where('patientID', '==', userId)
+    .where('appointmentDate', '==', date)
+    .get();
+
+  return !snapshot.empty; // true if exists
+};
+
   const bookAppointment = async (
     doctorID: string,
     appointmentDate: any,
@@ -65,6 +76,13 @@ export const useFirestore = (loading: boolean = true) => {
   ) => {
     setLoading(true);
     try {
+      const alreadyExists = await checkIfSlotExists(doctorID, uid, appointmentDate, appointmentTime);
+      console.log("Appointment already exists ::::", alreadyExists)
+      console.log(" Appointment time is ::::", appointmentTime)
+      if (alreadyExists) {
+          alert('You already have an appointment booked at this time.');
+          return;
+      }
       const docRef = await addDoc(firestore().collection(APPOINTMENTS), {
         patientID: uid,
         doctorID,
@@ -81,6 +99,7 @@ export const useFirestore = (loading: boolean = true) => {
       setLoading(false);
     }
   };
+
   const appointmentTiming = async (appointmentDate: string) => {
     try {
       const collection = await firestore()
@@ -150,3 +169,7 @@ export const useFirestore = (loading: boolean = true) => {
     bookAppointment,
   };
 };
+function alert(arg0: string) {
+  throw new Error('Function not implemented.');
+}
+

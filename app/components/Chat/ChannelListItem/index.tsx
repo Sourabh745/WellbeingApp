@@ -1,7 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React, { memo } from 'react';
 import {Pressable} from 'react-native';
-import {useUser} from '../../../hooks';
 import {StackNavigation} from '../../../navigators';
 import {formatAMPM, moderateScale} from '../../../utils';
 import {Avatar} from '../../Avatar';
@@ -12,10 +11,7 @@ type ChannelListItemProps = {
   channel: any
 };
 
-export const ChannelListItem = memo(({channel:{lastMessage, lastMessageTime, senderName, senderId, senderSelfie}}: ChannelListItemProps) => {
-
-  console.log("SENDER Selfie :::: ",senderSelfie);
-  
+export const ChannelListItem = memo(({channel:{lastMessage, lastMessageTime, senderName, senderId, senderSelfie}}: ChannelListItemProps) => {  
 
   // const {uid: UID} = useUser();
   const navigation = useNavigation<StackNavigation>();

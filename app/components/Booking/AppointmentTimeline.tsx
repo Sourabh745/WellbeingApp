@@ -121,10 +121,10 @@ export const AppointmentTimeline = ({appointments}: AppointmentTimeline) => {
                     fontSize={moderateScale(13)}
                     variant="medium"
                     color="black">
-                    {doctor?.appointmentTime[0].startTime &&
+                    {doctor?.appointmentTime[0]?.startTime &&
                       startEndTime(
-                        doctor?.appointmentTime[0].startTime,
-                        doctor?.appointmentTime[0].endTime,
+                        doctor?.appointmentTime[0]?.startTime,
+                        doctor?.appointmentTime[0]?.endTime,
                       ).toUpperCase()}
                     {/* 9:30 AM - 10:30 AM */}
                   </Text>

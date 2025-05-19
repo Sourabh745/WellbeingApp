@@ -132,6 +132,7 @@ android {
             minSdkVersion rootProject.ext.minSdkVersion
             applicationId 'com.wellbeingcustomer'
             dimension "standard"
+
             manifestPlaceholders = [
                     appName:  "WellbeingProduction",
                     appIcon: "@mipmap/ic_launcher",
@@ -146,13 +147,13 @@ android {
             minSdkVersion rootProject.ext.minSdkVersion
             applicationId 'com.wellbeingcustomer'
             dimension "standard"
-            applicationIdSuffix ".staging"
-            versionNameSuffix "-staging"
             manifestPlaceholders = [
                     appName:  "WellbeingStaging",
                     appIcon: "@mipmap/ic_launcher_staging",
                     appIconRound: "@mipmap/ic_launcher_staging_round",
             ]
+            applicationIdSuffix ".development"
+            versionNameSuffix "-development"
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "com.wellbeingcustomer"
 

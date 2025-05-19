@@ -24,6 +24,27 @@ export const Profile = () => {
   const changeLanguage = () => {
     navigation.navigate('ChangeLanguage');
   };
+
+  //Delete account
+  const deleteAccount = async() => {
+    console.log("account that you want to delete ::::", user);
+    try {
+    
+    const currUser = auth().currentUser; // get current logging in user 
+    if(currUser){
+      await currUser.delete();
+      console.log("User successfully deleted",currUser);
+      signOut();
+    }
+    else{
+      console.log('No user is currently signed in');
+      signOut();
+    }
+    } catch (error) {
+      console.log("Error get while deleting account ::::", error);
+    }
+  }
+
   return (
     <Screen useAlignment isLoading={loading}>
       <Box mt="l">
@@ -68,7 +89,7 @@ export const Profile = () => {
             bg="error"
             icon={<Trash />}
             title="Delete Account"
-            onPress={() => {}}
+            onPress={deleteAccount}
           />
           <ProfileItem
             bg="blueLight"

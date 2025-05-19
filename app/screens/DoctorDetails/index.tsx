@@ -86,7 +86,7 @@ export const DoctorDetails = () => {
           />
         </Box>
 
-        <ScheduleTab doctor={params.doctor} />
+        <ScheduleTab doctor={params.doctor} /> 
 
         {/* <TabView
           lazy={true}

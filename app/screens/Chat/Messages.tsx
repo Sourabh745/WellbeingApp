@@ -38,6 +38,7 @@ export const EnhancedMessages = ({route}: any) => {
   const [resolvedRoomId, setResolvedRoomId] = useState<any>();
   const [channelExist, setChannelExist] = useState<any>();
   const flashListRef = useRef<FlashList<any>>(null);
+  const [ChatRoom,setChatRooms] = useState<any[]>();
 
   const sendStyle = useAnimatedStyle(() => {
     return {
@@ -52,7 +53,6 @@ export const EnhancedMessages = ({route}: any) => {
   useEffect(() => {
     const db = firebase.firestore();
     const ids = [UID!, doctorID!].sort();
-      console.log("===================1===================");
 
     const unsubscribe = db
       .collection('wellbeingMessages')
@@ -65,9 +65,6 @@ export const EnhancedMessages = ({route}: any) => {
           setMessages(msgs);
         }
       });
-      console.log("===================2===================");
-      
-
     return () => unsubscribe();
   }, [UID, doctorID]);
 
@@ -75,7 +72,6 @@ export const EnhancedMessages = ({route}: any) => {
   const getRoomId = async () => {
     const db = firebase.firestore();
     const ids = [UID!, doctorID!].sort();
-          console.log("===================3===================");
 
     const channelExist = await db
       .collection('wellbeingMessages')
@@ -83,7 +79,6 @@ export const EnhancedMessages = ({route}: any) => {
       .get();
 
     setChannelExist(channelExist)
-          console.log("===================4===================");
 
     if (!channelExist.empty) {
       return channelExist.docs[0]?.data()?.roomId
@@ -93,9 +88,8 @@ export const EnhancedMessages = ({route}: any) => {
   }
 
    useEffect(() => {
-    // Only fetch roomId if it's not provided in route.params
+    // Only fetch roomId if it's not provided in route.params and it will call getRoomId().
     const fetchRoomId = async () => {
-                console.log("===================5===================");
       const roomID = await getRoomId();
       if (!resolvedRoomId && !route?.params?.roomId) {
         try {
@@ -108,8 +102,8 @@ export const EnhancedMessages = ({route}: any) => {
     fetchRoomId();
   }, [route?.params?.roomId]);
 
+  //========================================================================
   useEffect(() => {
-              console.log("===================6===================");
     const roomId = resolvedRoomId || route?.params?.roomId;
     if (!roomId) return;
 
@@ -117,22 +111,18 @@ export const EnhancedMessages = ({route}: any) => {
   
     const unsubscribe = db
       .collection('wellbeingMessages')
-      .doc(roomId as any)
+      .doc(roomId as string)
       .onSnapshot(async (docSnap) => {
         if (!docSnap.exists) {
           setMessages([]);
           return;
         }
-  
         const data = docSnap.data();
         console.log("Messages data ::::", data);
         
-        const message = data?.messages || [];
-  
-        setMessages(message);
-  
+        const newMessage = data?.messages || [];
         // Mark unread messages for current user as "read"
-        const updatedMessages = messages.map((msg:any) => {
+        const updatedMessages = newMessage.map((msg:any) => {
           if (msg.reciever == UID && msg.deliveryStatus !== 'read') {
             return {
               ...msg,
@@ -143,11 +133,13 @@ export const EnhancedMessages = ({route}: any) => {
         });
   
         // If any message was updated, push the change
-        const hasUpdates = messages.some(
+        
+        const hasUpdates = newMessage.some( //getting error here because using messages from useState not the var we declared here to get real time message.
+
           (msg:any, i:any) => msg.deliveryStatus !== updatedMessages[i].deliveryStatus
         );
   
-        if (hasUpdates) {
+        if(hasUpdates) {
           try {
             await db.collection('wellbeingMessages')
               .doc(roomId as any)
@@ -156,6 +148,8 @@ export const EnhancedMessages = ({route}: any) => {
             console.error('Error updating read messages:', error);
           }
         }
+        setMessages(updatedMessages);
+
       }, error => {
         console.error('Error in realtime listener:', error);
       });
@@ -163,6 +157,85 @@ export const EnhancedMessages = ({route}: any) => {
     return () => unsubscribe();
   }, [resolvedRoomId, route?.params?.roomId, UID]);
 
+//====================================================
+  const getSenderInfo = async (senderId: any) => {
+    const senderInfo = await firebase.firestore().collection('wellbeingUsers').doc(senderId).get();
+    return senderInfo?.data()
+  }
+//====================================================
+
+ //just now added
+  useFocusEffect(
+    useCallback(() => {
+      // const userId = auth().currentUser?.uid;
+      const userId = UID;
+      if (!userId) return;
+  
+      let messageUnsubscribers: (() => void)[] = [];
+      let userUnsubscriber: () => void;
+  
+      // setLoading(true);
+  
+      const setupListeners = async () => {
+        const userRef = firebase.firestore().collection('wellbeingUsers').doc(userId);
+  
+        // Listen to user's channels in real-time
+        userUnsubscriber = userRef.onSnapshot(async (userSnap) => {
+          const userData = userSnap.data();
+          const channels: string[] = userData?.channels || [];
+  
+          // Clean up previous listeners
+          messageUnsubscribers.forEach(unsub => unsub());
+          messageUnsubscribers = [];
+  
+          // const newRoomData: ChatRoom[] = [];
+  
+          channels.forEach((roomId) => {
+            const unsub = firebase.firestore()
+              .collection('wellbeingMessages')
+              .doc(roomId)
+              .onSnapshot(async (roomSnap) => {
+                const data = roomSnap.data();
+                if (!data) return;
+  
+                const senderId = data.ids?.find((uid: string) => uid !== userId);
+                const senderData = await getSenderInfo(senderId);
+  
+                const updatedRoom = {
+                  roomId,
+                  lastMessage: data.lastMessage || '',
+                  lastMessageTime: data.lastMessageTime?.toDate?.() || new Date(0),
+                  senderName: senderData?.fullName || 'Unknown',
+                  senderId,
+                  senderSelfie: senderData?.pic || '',
+                };
+  
+                // Update room if already exists or push new
+                setChatRooms((prevRooms: any[] = []) => {
+                  const others = prevRooms?.filter(room => room.roomId !== roomId);
+                  const updated = [...others, updatedRoom];
+                  updated.sort((a, b) => b.lastMessageTime.getTime() - a.lastMessageTime.getTime());
+                  return updated;
+                });
+              });
+  
+            messageUnsubscribers.push(unsub);
+          });
+  
+          // setLoading(false);
+        });
+      };
+  
+      setupListeners();
+  
+      return () => {
+        // Cleanup listeners
+        userUnsubscriber?.();
+        messageUnsubscribers.forEach(unsub => unsub());
+      };
+    }, [])
+  );
+ 
 
   const onPress = async () => {
     if (messageInput?.length > 0) {
@@ -209,7 +282,6 @@ export const EnhancedMessages = ({route}: any) => {
             },
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             messages: [],
-            
           });
 
           const senderRef = db.collection('wellbeingUsers').doc(UID);

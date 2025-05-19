@@ -59,6 +59,7 @@ export async function appleSignInAndroid() {
   // Configure the request
   appleAuthAndroid.configure({
     // The Service ID you registered with Apple
+    // clientId: `com.wellbeing.${Config.ENVIRONMENT?.toLowerCase()}`,
     clientId: `com.wellbeing.${Config.ENVIRONMENT?.toLowerCase()}`,
 
     // Return URL added to your Apple dev console. We intercept this redirect, but it must still match

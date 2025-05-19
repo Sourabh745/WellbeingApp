@@ -29,11 +29,9 @@ import './i18n';
 import {AppStack} from './navigators/AppStack';
 import socket from './services/socket';
 import {colors, theme} from './theme';
-LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+// LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
-LogBox.ignoreLogs([
-  'This method is deprecated (as well as all React Native Firebase namespaced API)',
-]);
+
 function App(): React.JSX.Element {
   enableFreeze(true);
 

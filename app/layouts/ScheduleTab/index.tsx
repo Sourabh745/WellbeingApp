@@ -66,7 +66,7 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
   //   }
   // }, [fixAndroidUnmount, navigation]);
   useEffect(() => {
-    if (data.length === 1) {
+    if (data?.length === 1) {
       setTimeout(
         () =>
           navigation.reset({
@@ -161,6 +161,8 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
                 <ChipList
                   availableTime={availableTime}
                   onTimeSelected={onTimeSelected}
+                  doctorID = {doctor.uid}
+                  selectedDate= {selectedDate}
                 />
               </Box>
             ) : (

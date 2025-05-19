@@ -72,8 +72,8 @@ export const TimelineItem = ({onPress, item}: TimelineItemProps) => {
 
                     <Text color="black" fontSize={moderateScale(14)}>
                       {startEndTime(
-                        appointmentTime[0].startTime,
-                        appointmentTime[0].endTime,
+                        appointmentTime?.[0]?.startTime,
+                        appointmentTime?.[0]?.endTime,
                       )}
                     </Text>
                   </Box>
