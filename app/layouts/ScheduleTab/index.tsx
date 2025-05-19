@@ -1,4 +1,7 @@
-import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {
+  firebase,
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
 import React, {memo, useEffect, useRef, useState} from 'react';
@@ -6,7 +9,7 @@ import {Pressable, ScrollView} from 'react-native';
 import CalendarStrip from 'react-native-calendar-strip';
 import {CalendarFill, Dropdown} from '../../assets/svgs';
 import {Box, Button, ChipList, CircularLoader, Text} from '../../components';
-import {useFirestore} from '../../hooks';
+import {useFirestore, useUser} from '../../hooks';
 import {StackNavigation} from '../../navigators';
 import {colors} from '../../theme';
 import {fonts} from '../../theme/typography';
@@ -17,6 +20,7 @@ import {
   $dateNameStyle,
   $dateNumberStyle,
 } from './styles';
+import {APPOINTMENTS} from '../../services';
 type ScheduleTabProps = {
   doctor: FirebaseFirestoreTypes.DocumentData;
 };
@@ -32,6 +36,7 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
   const [selectedCalendarDate, setSelectedCalenderDate] = useState<Date>();
   const navigation = useNavigation<StackNavigation>();
   const calendarStripRef = useRef<CalendarStrip>(null);
+
   const onDateSelected = (date: moment.Moment) => {
     setSelectedDate(date);
   };
@@ -44,6 +49,11 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
     setSelectedCalenderDate(selected);
   };
   const {bookAppointment, isLoading, data} = useFirestore(false);
+  const [alreadyBookedToday, setAlreadyBookedToday] = useState(false);//for only one booking on a day
+
+  //getting user id
+  const {uid} = useUser();
+  const UID = uid;
 
   const datesBlacklistFunc = (date: moment.Moment) => {
     //Enable weekdays only
@@ -88,6 +98,26 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
       selectedTime,
     );
   };
+
+  //For Fetch booked appointment for the day so that only one time can be selected a day
+  useEffect(() => {
+    const checkIfAlreadyBooked = async () => {
+      const snapshot = await firebase
+        .firestore()
+        .collection(APPOINTMENTS)
+        .where('doctorID', '==', doctor?.uid)
+        .where('patientID', '==', UID)
+        .where('appointmentDate','==',moment(selectedDate).format('YYYY-MM-DD'))
+        .get();
+
+      setAlreadyBookedToday(!snapshot.empty);//false means it's not booked yet
+    };
+
+    if (selectedDate) {
+      checkIfAlreadyBooked();
+    }
+  }, [selectedDate]);
+
   return (
     <Box flex={1}>
       {isLoading ? (
@@ -156,13 +186,13 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
             <Text variant="medium" fontSize={moderateScale(15)}>
               Time
             </Text>
-            {selectedDate || selectedCalendarDate ? (
+            {selectedDate || selectedDate ? (
               <Box>
                 <ChipList
                   availableTime={availableTime}
                   onTimeSelected={onTimeSelected}
-                  doctorID = {doctor.uid}
-                  selectedDate= {selectedDate}
+                  doctorID={doctor.uid}
+                  selectedDate={selectedDate}
                 />
               </Box>
             ) : (
@@ -181,7 +211,7 @@ export const ScheduleTab = memo(({doctor}: ScheduleTabProps) => {
               </Box>
             )}
           </ScrollView>
-          {selectedTime && selectedDate && (
+          {selectedTime && selectedDate && !alreadyBookedToday && (
             <Box justifyContent="flex-end" pt="s">
               <Button
                 label="Book appointment"

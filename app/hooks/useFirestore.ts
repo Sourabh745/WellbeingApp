@@ -77,8 +77,7 @@ export const useFirestore = (loading: boolean = true) => {
     setLoading(true);
     try {
       const alreadyExists = await checkIfSlotExists(doctorID, uid, appointmentDate, appointmentTime);
-      console.log("Appointment already exists ::::", alreadyExists)
-      console.log(" Appointment time is ::::", appointmentTime)
+      
       if (alreadyExists) {
           alert('You already have an appointment booked at this time.');
           return;

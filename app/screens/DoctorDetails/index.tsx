@@ -30,7 +30,7 @@ export const DoctorDetails = () => {
   ]);
   const {params} = useRoute<RouteProp<AppStackParamList, 'DoctorDetails'>>();
   const {patients, yoe, rating, review} = params.doctor;
-  console.log("DoctorDetails::::", params.doctor)
+
   const onTabItemPress = (item: number) => {
     setIndex(item);
   };
@@ -93,7 +93,7 @@ export const DoctorDetails = () => {
           style={{
             marginTop: spacing.ll,
           }}
-          sceneContainerStyle={{backgroundColor: colors.primary}}
+          sceneContainerStyle={{backgroundColor: colors.primary100}}
           renderTabBar={renderTabHeader}
           navigationState={{index, routes}}
           renderScene={renderScene}
