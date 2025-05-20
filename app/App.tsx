@@ -150,6 +150,7 @@ function App(): React.JSX.Element {
 
     const handleIncomingCallOffer = async (data: any, callback: any) => {
       const {offer, doctor, offerType} = data;
+        console.log('Received offer:', data);
 
       if (navigationRef.isReady()) {
         navigationRef.navigate('VideoCall', {

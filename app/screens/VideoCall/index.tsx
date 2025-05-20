@@ -55,14 +55,14 @@ export const VideoCall = () => {
 
   const handleMic = () => {
     isMicOn ? setIsMicOn(false) : setIsMicOn(true);
-    localStreamVideo?.getAudioTracks().forEach(track => {
+    localStreamVideo?.getAudioTracks()?.forEach(track => {
       isMicOn ? (track.enabled = false) : (track.enabled = true);
     });
   };
 
   function handleCam() {
     isCamOn ? setIsCamOn(false) : setIsCamOn(true);
-    localStreamVideo?.getVideoTracks().forEach(track => {
+    localStreamVideo?.getVideoTracks()?.forEach(track => {
       isCamOn ? (track.enabled = false) : (track.enabled = true);
     });
   }
@@ -148,25 +148,31 @@ export const VideoCall = () => {
         },
       };
       try {
-        const mediaStream = await mediaDevices.getUserMedia(mediaConstraints);
+        const mediaStream = await mediaDevices?.getUserMedia(mediaConstraints);
 
         setLocalStreamVideo(mediaStream);
-        mediaStream.getTracks().map(track => {
-          peerConnection.addTrack(track, mediaStream);
+        mediaStream.getTracks()?.map(track => {
+          peerConnection?.addTrack(track, mediaStream);
         });
-      } catch (err) {}
-    })();
-    socket.on('receivedOffer', async data => {
-      const {offerDescription} = data;
-      try {
-        // Use the received answerDescription
-        const answerDescription = new RTCSessionDescription(offerDescription);
-        await peerConnection.setRemoteDescription(answerDescription);
-        //processCandidates();
       } catch (err) {
-        // Handle Error
+        console.log("Media stream Error :::: ", err);
+        
       }
-    });
+    })();
+
+    //================ modify it ==================
+    // socket.on('receivedOffer', async data => {
+    //   const {offerDescription} = data;
+    //   try {
+    //     // Use the received answerDescription
+    //     const answerDescription = new RTCSessionDescription(offerDescription);
+    //     await peerConnection.setRemoteDescription(answerDescription);
+    //     //processCandidates();
+    //   } catch (err) {
+    //     // Handle Error
+    //   }
+    // });
+
     socket.on('candidate', async data => {
       const {icecandidate} = data;
 
@@ -181,7 +187,32 @@ export const VideoCall = () => {
       // handleRemoteCandidate(candidate);
     });
 
-    peerConnection.addEventListener('connectionstatechange', () => {
+    //========================= new added here ===============
+    socket.on('offer', async data => {
+  const {offer} = data;
+  try {
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    processAnswer(); // Automatically answer if needed
+  } catch (err) {
+    console.error('Failed to handle incoming offer', err);
+  }
+});
+
+    //==================== adding this for answerOffer ====================
+
+  socket.on('answeredOffer', async ({offerDescription}) => {
+  try {
+    const remoteDesc = new RTCSessionDescription(offerDescription);
+    await peerConnection.setRemoteDescription(remoteDesc);
+  } catch (err) {
+    console.error('Failed to set remote description from answeredOffer', err);
+  }
+});
+
+
+  peerConnection.addEventListener('connectionstatechange', () => {
+      console.log('Connection state:', peerConnection.connectionState);
+
       switch (peerConnection.connectionState) {
         case 'connected':
           setCallStatus(peerConnection.connectionState);
@@ -195,11 +226,13 @@ export const VideoCall = () => {
         case 'closed':
           // You can handle the call being disconnected here.
 
+        console.log('Connection state:', peerConnection.connectionState);
           break;
       }
     });
 
     peerConnection.addEventListener('icecandidate', event => {
+  console.log('iceCandidate State:', peerConnection.iceGatheringState);      
       // When you find a null candidate then there are no more candidates.
       // Gathering of candidates has finished.
       if (!event.candidate) {
@@ -225,6 +258,8 @@ export const VideoCall = () => {
     });
 
     peerConnection.addEventListener('iceconnectionstatechange', () => {
+        console.log('ice connection change State:', peerConnection.iceConnectionState);
+
       switch (peerConnection.iceConnectionState) {
         case 'connected':
         case 'completed':
@@ -242,6 +277,7 @@ export const VideoCall = () => {
     });
 
     peerConnection.addEventListener('signalingstatechange', () => {
+        console.log('Signaling State:', peerConnection.signalingState);
       switch (peerConnection.signalingState) {
         case 'closed':
           // You can handle the call being disconnected here.
@@ -253,11 +289,18 @@ export const VideoCall = () => {
     peerConnection.addEventListener('track', event => {
       // Grab the remote stream from the connected participant.
       // remoteMediaStream = event.stream;
-      const streams = event.streams[0];
-      //console.log(streams);
+      const streams = event?.streams?.[0];
+      console.log(streams);
       setRemoteStreamVideo(streams);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      socket.off('candidate');
+      socket.off('offer');
+      socket.off('answeredOffer');
+      peerConnection.close();
+    };
   }, []);
 
   const processAnswer = async () => {
@@ -279,7 +322,7 @@ export const VideoCall = () => {
   const endCall = () => {
     peerConnection.close();
     navigation.goBack();
-    localStreamVideo?.getTracks().forEach(track => track.stop());
+    localStreamVideo?.getTracks()?.forEach(track => track.stop());
     setLocalStreamVideo(undefined);
   };
   const callOffer = async () => {
@@ -295,6 +338,8 @@ export const VideoCall = () => {
       );
       await peerConnection.setLocalDescription(offerDescription);
 
+      console.log('Sending offer to:', doctorID);
+      console.log('Offer SDP:', offerDescription);
       socket.volatile.emit(
         'offer',
         {
@@ -308,6 +353,8 @@ export const VideoCall = () => {
           offerType: 'Video',
         },
         (response: any) => {
+            console.log('Call status response:', response);
+
           //call has been sent
           setCallStatus(response.callStatus);
         },
@@ -317,7 +364,7 @@ export const VideoCall = () => {
       // Handle Errors
     }
   };
-
+console.log("localStreamVideo ::::", localStreamVideo)
   return (
     <>
       <StatusBar
